@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registered Students</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1769aa;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #1769aa;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        button {
+            border: none;
+            padding: 7px 12px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .edit {
+            background: #f39c12;
+        }
+
+        .delete {
+            background: #d9534f;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #1769aa;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Registered Students</h1>
+
+    <div class="table-box">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Full Name</th>
+                    <th>Gender</th>
+                    <th>Date of Birth</th>
+                    <th>Class</th>
+                    <th>Combination</th>
+                    <th>Year</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Parent Name</th>
+                    <th>Parent Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentTable">
+                <!-- Students will appear here -->
+            </tbody>
+        </table>
+
+    </div>
+
+    <a href="index.html" class="back">
+        ← Register New Student
+    </a>
+
+</div>
+
+
+<script>
+
+    // Get students from localStorage
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    const studentTable = document.getElementById("studentTable");
+
+
+    // Display students
+    function displayStudents() {
+
+        studentTable.innerHTML = "";
+
+        if (students.length === 0) {
+
+            studentTable.innerHTML = `
+                <tr>
+                    <td colspan="12" class="empty">
+                        No students registered yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        students.forEach((student, index) => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${student.studentId}</td>
+
+                <td>
+                    ${student.firstName}
+                    ${student.middleName || ""}
+                    ${student.lastName}
+                </td>
+
+                <td>${student.gender}</td>
+
+                <td>${student.dob}</td>
+
+                <td>${student.studentClass}</td>
+
+                <td>${student.combination || ""}</td>
+
+                <td>${student.year}</td>
+
+                <td>${student.phone}</td>
+
+                <td>${student.email || ""}</td>
+
+                <td>${student.parentName}</td>
+
+                <td>${student.parentPhone}</td>
+
+                <td>
+                    <button class="edit"
+                        onclick="editStudent(${index})">
+                        Edit
+                    </button>
+
+                    <button class="delete"
+                        onclick="deleteStudent(${index})">
+                        Delete
+                    </button>
+                </td>
+            `;
+
+            studentTable.appendChild(row);
+        });
+    }
+
+
+    // Delete student
+    function deleteStudent(index) {
+
+        const confirmDelete = confirm(
+            "Are you sure you want to delete this student?"
+        );
+
+        if (confirmDelete) {
+
+            students.splice(index, 1);
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(students)
+            );
+
+            displayStudents();
+        }
+    }
+
+
+    // Edit student
+    function editStudent(index) {
+
+        // Save selected student index
+        localStorage.setItem(
+            "editStudentIndex",
+            index
+        );
+
+        // Open registration form
+        window.location.href = "index.html";
+    }
+
+
+    // Display students when page opens
+    displayStudents();
+
+</script>
+
+</body>
+</html>
+
