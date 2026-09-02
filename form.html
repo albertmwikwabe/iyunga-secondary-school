@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Registration System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1769aa;
+        }
+
+        h2 {
+            background: #1769aa;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 70px;
+        }
+
+        button {
+            padding: 10px 18px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            background: #1769aa;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .reset {
+            background: #777;
+        }
+
+        .edit {
+            background: #f39c12;
+            margin: 2px;
+        }
+
+        .delete {
+            background: #d9534f;
+            margin: 2px;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #1769aa;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        #message {
+            text-align: center;
+            color: green;
+            font-weight: bold;
+            margin: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Student Registration System</h1>
+
+    <p>Please fill in student information</p>
+
+    <form id="registrationForm">
+
+        <h2>Student Information</h2>
+
+        <label>Student ID</label>
+        <input type="text" id="studentId" required>
+
+        <label>First Name</label>
+        <input type="text" id="firstName" required>
+
+        <label>Middle Name</label>
+        <input type="text" id="middleName">
+
+        <label>Last Name</label>
+        <input type="text" id="lastName" required>
+
+        <label>Gender</label>
+        <select id="gender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+        </select>
+
+        <label>Date of Birth</label>
+        <input type="date" id="dob" required>
+
+
+        <h2>Academic Information</h2>
+
+        <label>Class</label>
+        <select id="studentClass" required>
+            <option value="">Select Class</option>
+            <option>Form One</option>
+            <option>Form Two</option>
+            <option>Form Three</option>
+            <option>Form Four</option>
+            <option>Form Five</option>
+            <option>Form Six</option>
+        </select>
+
+        <label>Combination / Stream</label>
+        <input type="text" id="combination"
+               placeholder="e.g. A, B, PCM, PCB">
+
+        <label>Registration Year</label>
+        <input type="number" id="year" required>
+
+
+        <h2>Contact Information</h2>
+
+        <label>Phone Number</label>
+        <input type="tel" id="phone" required>
+
+        <label>Email Address</label>
+        <input type="email" id="email">
+
+        <label>Home Address</label>
+        <textarea id="address" required></textarea>
+
+
+        <h2>Parent / Guardian Information</h2>
+
+        <label>Parent / Guardian Name</label>
+        <input type="text" id="parentName" required>
+
+        <label>Parent / Guardian Phone</label>
+        <input type="tel" id="parentPhone" required>
+
+
+        <button type="submit" id="submitButton">
+            Register Student
+        </button>
+
+        <button type="reset" class="reset" onclick="cancelEdit()">
+            Clear Form
+        </button>
+        <a href="table.html">View Registered Students</a>
+        <script>
+
+            const form = document.getElementById("registrationForm");
+            
+            let students = JSON.parse(localStorage.getItem("students")) || [];
+            
+            let editIndex = localStorage.getItem("editStudentIndex");
+            
+            
+            // If editing a student
+            if (editIndex !== null) {
+            
+                const student = students[editIndex];
+            
+                document.getElementById("studentId").value = student.studentId;
+                document.getElementById("firstName").value = student.firstName;
+                document.getElementById("middleName").value = student.middleName;
+                document.getElementById("lastName").value = student.lastName;
+                document.getElementById("gender").value = student.gender;
+                document.getElementById("dob").value = student.dob;
+                document.getElementById("studentClass").value = student.studentClass;
+                document.getElementById("combination").value = student.combination;
+                document.getElementById("year").value = student.year;
+                document.getElementById("phone").value = student.phone;
+                document.getElementById("email").value = student.email;
+                document.getElementById("address").value = student.address;
+                document.getElementById("parentName").value = student.parentName;
+                document.getElementById("parentPhone").value = student.parentPhone;
+            
+                document.getElementById("submitButton").textContent =
+                    "Update Student";
+            }
+            
+            
+            // Register / Update student
+            form.addEventListener("submit", function(event) {
+            
+                event.preventDefault();
+            
+                const student = {
+            
+                    studentId:
+                        document.getElementById("studentId").value,
+            
+                    firstName:
+                        document.getElementById("firstName").value,
+            
+                    middleName:
+                        document.getElementById("middleName").value,
+            
+                    lastName:
+                        document.getElementById("lastName").value,
+            
+                    gender:
+                        document.getElementById("gender").value,
+            
+                    dob:
+                        document.getElementById("dob").value,
+            
+                    studentClass:
+                        document.getElementById("studentClass").value,
+            
+                    combination:
+                        document.getElementById("combination").value,
+            
+                    year:
+                        document.getElementById("year").value,
+            
+                    phone:
+                        document.getElementById("phone").value,
+            
+                    email:
+                        document.getElementById("email").value,
+            
+                    address:
+                        document.getElementById("address").value,
+            
+                    parentName:
+                        document.getElementById("parentName").value,
+            
+                    parentPhone:
+                        document.getElementById("parentPhone").value
+                };
+            
+            
+                // Update existing student
+                if (editIndex !== null) {
+            
+                    students[editIndex] = student;
+            
+                    localStorage.removeItem("editStudentIndex");
+            
+                    alert("Student updated successfully!");
+            
+                }
+            
+                // Register new student
+                else {
+            
+                    students.push(student);
+            
+                    alert("Student registered successfully!");
+                }
+            
+            
+                // Save students
+                localStorage.setItem(
+                    "students",
+                    JSON.stringify(students)
+                );
+            
+            
+                // Clear form
+                form.reset();
+            
+                // Go to table
+                window.location.href = "table.html";
+            
+            });
+            
+            
+            // Cancel edit
+            function cancelEdit() {
+            
+                localStorage.removeItem("editStudentIndex");
+            
+            }
+            
+            </script>
+    </form>
+
+    
+
+    
